@@ -1,0 +1,75 @@
+name: help
+
+services:
+  help:
+    image: nginx:1.27-alpine
+    container_name: help
+    user: "0:0"
+    expose:
+      - 80
+    labels:
+      caddy_0: help-${APP_DOMAIN}
+      caddy_0.import: gateway_tls
+      caddy_0.reverse_proxy: "{{upstreams 80}}"
+      caddy_1: help-${APP_PUBLIC_IP_DASH}.nip.io
+      caddy_1.import: gateway_tls
+      caddy_1.reverse_proxy: "{{upstreams 80}}"
+      caddy_2: help-${APP_PUBLIC_IP_DASH}.sslip.io
+      caddy_2.reverse_proxy: "{{upstreams 80}}"
+    volumes:
+      - /DATA/AppData/$AppID/html/:/usr/share/nginx/html/:ro
+      - /DATA/AppData/$AppID/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    cpu_shares: 80
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+    restart: unless-stopped
+    networks:
+      - pcs
+
+networks:
+  pcs:
+    name: pcs
+    external: true
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: help
+  webui_port: 80
+  store_app_id: help
+  category: Utilities
+  author: Yundera Team
+  developer: Yundera
+  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/Guide/icon.png
+  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/Guide/screenshot-1.png
+  screenshot_link:
+    - https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/Guide/screenshot-1.png
+  title:
+    en_us: Start Here
+  tagline:
+    en_us: Pick a goal, get there in 3 taps
+  description:
+    en_us: |
+      Your starting point for PCS. Pick what you want to do in plain
+      words — back up photos, stream movies, keep passwords safe — and
+      get a simple 3-step guide. Works in EN, FR and KO, for beginners
+      and developers alike.
+  tips:
+    before_install:
+      en_us: |
+        This app helps you get started with your PCS.
+        No configuration needed.
+  index: /
+  scheme: https
+  pre-install-cmd: |
+    mkdir -p /DATA/AppData/help/html/css/ /DATA/AppData/help/html/js/
+    REPO="https://raw.githubusercontent.com/BookJJun-IJ/GuideApp/main"
+    curl -fsSL "$REPO/src/index.html" -o /DATA/AppData/help/html/index.html
+    curl -fsSL "$REPO/src/guide.html" -o /DATA/AppData/help/html/guide.html
+    curl -fsSL "$REPO/src/css/style.css" -o /DATA/AppData/help/html/css/style.css
+    curl -fsSL "$REPO/src/js/app.js" -o /DATA/AppData/help/html/js/app.js
+    curl -fsSL "$REPO/src/js/marked.min.js" -o /DATA/AppData/help/html/js/marked.min.js
+    curl -fsSL "$REPO/src/nginx.conf" -o /DATA/AppData/help/nginx.conf
