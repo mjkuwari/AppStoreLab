@@ -8,6 +8,7 @@ services:
     hostname: docusaurusmcp-backend
     user: "0:0"
     restart: unless-stopped
+    cpu_shares: 50
     expose:
       - 9750
     environment:
@@ -56,7 +57,7 @@ services:
     container_name: docusaurusmcp
     hostname: docusaurusmcp
     restart: unless-stopped
-    cpu_shares: 50
+    cpu_shares: 80
     expose:
       - 80
     user: "root"
@@ -92,7 +93,8 @@ x-casaos:
   architectures:
     - amd64
     - arm64
-  main: docusaurusmcp-backend
+  main: docusaurusmcp-proxy
+  store_app_id: docusaurusmcp
   hostname: docusaurusmcp-${APP_DOMAIN}
   scheme: https
   port_map: "443"
