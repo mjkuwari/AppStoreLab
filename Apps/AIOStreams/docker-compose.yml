@@ -60,8 +60,8 @@ x-casaos:
   developer: Viren070
   category: Media
   tags: ["media", "stremio", "personal"]
-  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
-  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
+  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStoreLab@main/Apps/AIOStreams/icon.png
+  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStoreLab@main/Apps/AIOStreams/icon.png
   pre-install-cmd: |
     APP_DATA="/DATA/AppData/aiostreams" &&
     ENV_FILE="/DATA/AppData/casaos/apps/aiostreams/.env" &&
