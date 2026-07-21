@@ -1,1 +1,170 @@
+name: aiostreams
 
+services:
+  aiostreams:
+    image: ghcr.io/viren070/aiostreams:v2.31.1
+    container_name: aiostreams
+    restart: unless-stopped
+    user: $PUID:$PGID
+    expose:
+      - "3000"
+    labels:
+      caddy_0: aiostreams-${APP_DOMAIN}
+      caddy_0.import: gateway_tls
+      caddy_0.reverse_proxy: "{{upstreams 3000}}"
+      caddy_1: aiostreams-${APP_PUBLIC_IP_DASH}.nip.io
+      caddy_1.import: gateway_tls
+      caddy_1.reverse_proxy: "{{upstreams 3000}}"
+      caddy_2: aiostreams-${APP_PUBLIC_IP_DASH}.sslip.io
+      caddy_2.reverse_proxy: "{{upstreams 3000}}"
+    networks:
+      - pcs
+    environment:
+      PUID: $PUID
+      PGID: $PGID
+      TZ: $TZ
+      NODE_ENV: production
+      # Public URL used to build the install link you add to Stremio
+      BASE_URL: "https://aiostreams-${APP_DOMAIN}"
+      # SQLite config store. Resolves to /app/data/db.sqlite (persisted below).
+      DATABASE_URI: "sqlite://./data/db.sqlite"
+      # 64-char hex key that encrypts saved configuration. Generated once by the
+      # pre-install command and kept in AppData so it survives reinstalls.
+      SECRET_KEY: ${AIOSTREAMS_SECRET_KEY}
+      # Dashboard / configure login. Gates the human UI only; the add-on URL that
+      # Stremio fetches stays reachable (its encrypted config is the credential).
+      AIOSTREAMS_AUTH: "admin:$APP_DEFAULT_PASSWORD"
+    volumes:
+      - /DATA/AppData/aiostreams/data/:/app/data
+    cpu_shares: 50
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+networks:
+  pcs:
+    name: pcs
+    external: true
+
+x-casaos:
+  main: aiostreams
+  index: /stremio/configure
+  webui_port: 3000
+  store_app_id: aiostreams
+  architectures:
+    - amd64
+    - arm64
+  author: Yundera Team
+  developer: Viren070
+  category: Media
+  tags: ["media", "stremio", "personal"]
+  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
+  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
+  pre-install-cmd: |
+    APP_DATA="/DATA/AppData/aiostreams" &&
+    ENV_FILE="/DATA/AppData/casaos/apps/aiostreams/.env" &&
+    mkdir -p "$APP_DATA/data" &&
+    if [ ! -s "$APP_DATA/secret_key" ]; then
+      openssl rand -hex 32 > "$APP_DATA/secret_key"
+    fi &&
+    printf 'AIOSTREAMS_SECRET_KEY=%s\n' "$(cat "$APP_DATA/secret_key")" > "$ENV_FILE"
+  title:
+    en_us: AIOStreams
+  tagline:
+    en_us: One filtered stream list for all your Stremio add-ons
+    fr_fr: Une liste de flux filtrée pour tous vos add-ons Stremio
+    ko_kr: 모든 Stremio 애드온을 위한 하나의 필터링된 스트림 목록
+  description:
+    en_us: |
+      **Merge, filter and sort the streams from all your Stremio add-ons**
+
+      AIOStreams sits in front of your Stremio add-ons, queries them together, and returns a single tidy list, filtered and sorted by your own rules before Stremio ever sees it.
+
+      **Key features:**
+      - Combine any number of add-ons into one list
+      - Filter by resolution, video codec, quality, HDR/Dolby Vision, audio, language and size
+      - Sort so your preferred streams appear first
+      - Rename and deduplicate cryptic release titles
+
+      **Why it matters on Yundera:**
+      You watch Stremio in the browser, and a browser only plays H.264 directly. Every HEVC/x265 stream forces server-side transcoding, which has no GPU on a standard instance and stutters. Set AIOStreams to exclude HEVC, Dolby Vision and 4K and to rank H.264 1080p first, and the list you see becomes the list that plays instantly. For the occasional HEVC or 4K title, use the Stremio desktop app instead.
+
+      AIOStreams aggregates only the sources you choose to enable. It does not host, store or distribute any content.
+    fr_fr: |
+      **Fusionnez, filtrez et triez les flux de tous vos add-ons Stremio**
+
+      AIOStreams se place devant vos add-ons Stremio, les interroge ensemble et renvoie une seule liste soignée, filtrée et triée selon vos propres règles avant même que Stremio ne la voie.
+
+      **Fonctionnalités principales :**
+      - Combinez un nombre illimité d'add-ons en une seule liste
+      - Filtrez par résolution, codec vidéo, qualité, HDR/Dolby Vision, audio, langue et taille
+      - Triez pour que vos flux préférés apparaissent en premier
+      - Renommez et dédupliquez les titres de release cryptiques
+
+      **Pourquoi c'est utile sur Yundera :**
+      Vous regardez Stremio dans le navigateur, et un navigateur ne lit directement que le H.264. Chaque flux HEVC/x265 force un transcodage côté serveur, sans GPU sur une instance standard, qui saccade. Configurez AIOStreams pour exclure le HEVC, le Dolby Vision et la 4K et pour classer le H.264 1080p en premier : la liste que vous voyez devient celle qui se lit instantanément. Pour un titre HEVC ou 4K occasionnel, utilisez plutôt l'application Stremio pour ordinateur.
+
+      AIOStreams n'agrège que les sources que vous choisissez d'activer. Il n'héberge, ne stocke ni ne distribue aucun contenu.
+    ko_kr: |
+      **모든 Stremio 애드온의 스트림을 병합, 필터링, 정렬하세요**
+
+      AIOStreams는 Stremio 애드온 앞에 위치하여 여러 애드온을 함께 조회하고, Stremio가 보기 전에 사용자 규칙에 따라 필터링하고 정렬한 하나의 깔끔한 목록을 반환합니다.
+
+      **주요 기능:**
+      - 원하는 만큼의 애드온을 하나의 목록으로 결합
+      - 해상도, 비디오 코덱, 품질, HDR/Dolby Vision, 오디오, 언어, 용량으로 필터링
+      - 선호하는 스트림이 먼저 표시되도록 정렬
+      - 복잡한 릴리스 제목을 이름 변경 및 중복 제거
+
+      **Yundera에서 중요한 이유:**
+      브라우저로 Stremio를 시청하며, 브라우저는 H.264만 직접 재생합니다. 모든 HEVC/x265 스트림은 서버 측 트랜스코딩을 강제하는데, 표준 인스턴스에는 GPU가 없어 재생이 끊깁니다. HEVC, Dolby Vision, 4K를 제외하고 H.264 1080p를 우선 정렬하도록 설정하면 보이는 목록이 곧 즉시 재생되는 목록이 됩니다. 가끔 HEVC 또는 4K 콘텐츠는 Stremio 데스크톱 앱을 사용하세요.
+
+      AIOStreams는 사용자가 활성화한 소스만 집계하며, 어떤 콘텐츠도 호스팅, 저장, 배포하지 않습니다.
+  tips:
+    before_install:
+      en_us: |
+        **Dashboard login**
+        | Username | Password                |
+        | -------- | ----------------------- |
+        | `admin`  | `$APP_DEFAULT_PASSWORD` |
+
+        **After install**
+        1. Open the app (it lands on the configure page) and log in.
+        2. Under Addons, paste the manifest URL of each Stremio add-on you already use.
+        3. Filters: exclude the `HEVC` / `x265` encode, exclude `Dolby Vision`, exclude the `2160p` resolution. Sorting: resolution descending.
+        4. Click Install, add the generated URL to Stremio, and remove the raw add-ons from Stremio so you only see this filtered list.
+
+        Titles whose only sources are HEVC will show no streams in the browser. That is expected: open those in the Stremio desktop app, which decodes HEVC natively.
+      fr_fr: |
+        **Connexion au tableau de bord**
+        | Utilisateur | Mot de passe            |
+        | ----------- | ----------------------- |
+        | `admin`     | `$APP_DEFAULT_PASSWORD` |
+
+        **Après l'installation**
+        1. Ouvrez l'app (elle s'ouvre sur la page de configuration) et connectez-vous.
+        2. Dans Addons, collez l'URL du manifest de chaque add-on Stremio que vous utilisez déjà.
+        3. Filtres : excluez l'encodage `HEVC` / `x265`, excluez `Dolby Vision`, excluez la résolution `2160p`. Tri : résolution décroissante.
+        4. Cliquez sur Install, ajoutez l'URL générée à Stremio, et retirez les add-ons d'origine de Stremio pour ne voir que cette liste filtrée.
+
+        Les titres dont les seules sources sont en HEVC n'afficheront pas de flux dans le navigateur. C'est normal : ouvrez-les dans l'application Stremio pour ordinateur, qui décode le HEVC nativement.
+      ko_kr: |
+        **대시보드 로그인**
+        | 사용자명 | 비밀번호                |
+        | -------- | ----------------------- |
+        | `admin`  | `$APP_DEFAULT_PASSWORD` |
+
+        **설치 후**
+        1. 앱을 열고(설정 페이지로 이동됩니다) 로그인합니다.
+        2. Addons에서 이미 사용 중인 각 Stremio 애드온의 manifest URL을 붙여넣습니다.
+        3. 필터: `HEVC` / `x265` 인코드 제외, `Dolby Vision` 제외, `2160p` 해상도 제외. 정렬: 해상도 내림차순.
+        4. Install을 클릭하고 생성된 URL을 Stremio에 추가한 뒤, 원본 애드온을 Stremio에서 제거하여 이 필터링된 목록만 보이도록 합니다.
+
+        소스가 HEVC뿐인 콘텐츠는 브라우저에서 스트림이 표시되지 않습니다. 정상입니다: 그런 콘텐츠는 HEVC를 네이티브로 디코딩하는 Stremio 데스크톱 앱에서 여세요.
+
+x-compose-app:
+  webui-host: aiostreams-${domain}
+  webui-path: "/stremio/configure"
