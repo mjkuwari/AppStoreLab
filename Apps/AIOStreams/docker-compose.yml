@@ -36,22 +36,13 @@ services:
       AIOSTREAMS_AUTH: "admin:$APP_DEFAULT_PASSWORD"
     volumes:
       - /DATA/AppData/aiostreams/data/:/app/data
-    # The image's built-in healthcheck uses a 5s start_period, too short for the
-    # ~15-20s anime-database warmup on a shared VPS core. Give it generous grace
-    # so the container is never reported unhealthy (and cycled) during startup.
-    healthcheck:
-      test: ["CMD", "/nodejs/bin/node", "/app/scripts/healthcheck.js"]
-      start_period: 120s
-      interval: 30s
-      timeout: 10s
-      retries: 5
     cpu_shares: 50
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 512M
         reservations:
-          memory: 256M
+          memory: 128M
 
 networks:
   pcs:
@@ -69,8 +60,8 @@ x-casaos:
   developer: Viren070
   category: Media
   tags: ["media", "stremio", "personal"]
-  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
-  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
+  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStoreLab@main/Apps/AIOStreams/icon.png
+  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStoreLab@main/Apps/AIOStreams/icon.png
   pre-install-cmd: |
     APP_DATA="/DATA/AppData/aiostreams" &&
     ENV_FILE="/DATA/AppData/casaos/apps/aiostreams/.env" &&
