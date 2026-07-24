@@ -69,8 +69,8 @@ x-casaos:
   developer: Viren070
   category: Media
   tags: ["media", "stremio", "personal"]
-  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
-  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
+  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStoreLab@main/Apps/AIOStreams/icon.png
+  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStoreLab@main/Apps/AIOStreams/icon.png
   pre-install-cmd: |
     APP_DATA="/DATA/AppData/aiostreams" &&
     ENV_FILE="/DATA/AppData/casaos/apps/aiostreams/.env" &&
@@ -139,39 +139,72 @@ x-casaos:
         | -------- | ----------------------- |
         | `admin`  | `$APP_DEFAULT_PASSWORD` |
 
-        **After install**
-        1. Open the app (it lands on the configure page) and log in.
-        2. Under Addons, paste the manifest URL of each Stremio add-on you already use.
-        3. Filters: exclude the `HEVC` / `x265` encode, exclude `Dolby Vision`, exclude the `2160p` resolution. Sorting: resolution descending.
-        4. Click Install, add the generated URL to Stremio, and remove the raw add-ons from Stremio so you only see this filtered list.
+        **1. Add your sources**
+        Open the app and sign in. In the About tab, switch the mode to **Advanced**. Then go to **Addons** and paste the manifest URL of each Stremio addon you already use.
 
-        Titles whose only sources are HEVC will show no streams in the browser. That is expected: open those in the Stremio desktop app, which decodes HEVC natively.
+        **2. Filters**
+        - **Encode** > Excluded: `HEVC`, `AV1`
+        - **Visual Tag** > Excluded: `10bit`, `DV`, `HDR10+`, `HDR10`, `HDR`
+        - **Resolution** > Excluded: `2160p`, `1440p`
+        - **Keyword** > Excluded: `x265`, `HEVC`, `10bit`
+        - **Size** > minimum `2 GB` for movies
+        - **Bitrate** > turn OFF "Use Runtime from Metadata Providers"
+
+        **3. Sorting**
+        Add the **Resolution** criterion, descending.
+
+        **4. Install into Stremio**
+        Go to **Save & Install**, set a password, click **Create**, then **Export** to back up your config. Copy the generated manifest URL, add it in Stremio under Add addon, and remove your old raw addons from Stremio so only the filtered list remains.
+
+        Note: browser playback supports H.264 only. Streams that do not declare their codec, or declare it wrongly, may still fail. Pick the next stream down.
       fr_fr: |
         **Connexion au tableau de bord**
         | Utilisateur | Mot de passe            |
         | ----------- | ----------------------- |
         | `admin`     | `$APP_DEFAULT_PASSWORD` |
 
-        **Après l'installation**
-        1. Ouvrez l'app (elle s'ouvre sur la page de configuration) et connectez-vous.
-        2. Dans Addons, collez l'URL du manifest de chaque add-on Stremio que vous utilisez déjà.
-        3. Filtres : excluez l'encodage `HEVC` / `x265`, excluez `Dolby Vision`, excluez la résolution `2160p`. Tri : résolution décroissante.
-        4. Cliquez sur Install, ajoutez l'URL générée à Stremio, et retirez les add-ons d'origine de Stremio pour ne voir que cette liste filtrée.
+        **1. Ajoutez vos sources**
+        Ouvrez l'app et connectez-vous. Dans l'onglet About, passez le mode sur **Advanced**. Allez ensuite dans **Addons** et collez l'URL du manifest de chaque addon Stremio que vous utilisez deja.
 
-        Les titres dont les seules sources sont en HEVC n'afficheront pas de flux dans le navigateur. C'est normal : ouvrez-les dans l'application Stremio pour ordinateur, qui décode le HEVC nativement.
+        **2. Filtres**
+        - **Encode** > Excluded : `HEVC`, `AV1`
+        - **Visual Tag** > Excluded : `10bit`, `DV`, `HDR10+`, `HDR10`, `HDR`
+        - **Resolution** > Excluded : `2160p`, `1440p`
+        - **Keyword** > Excluded : `x265`, `HEVC`, `10bit`
+        - **Size** > minimum `2 Go` pour les films
+        - **Bitrate** > desactivez "Use Runtime from Metadata Providers"
+
+        **3. Tri**
+        Ajoutez le critere **Resolution**, decroissant.
+
+        **4. Installation dans Stremio**
+        Allez dans **Save & Install**, definissez un mot de passe, cliquez sur **Create**, puis **Export** pour sauvegarder votre configuration. Copiez l'URL du manifest generee, ajoutez-la dans Stremio via Add addon, et retirez vos anciens addons de Stremio pour ne garder que la liste filtree.
+
+        Note : la lecture dans le navigateur ne supporte que le H.264. Les flux qui ne declarent pas leur codec, ou le declarent mal, peuvent encore echouer. Prenez le flux suivant.
       ko_kr: |
         **대시보드 로그인**
         | 사용자명 | 비밀번호                |
         | -------- | ----------------------- |
         | `admin`  | `$APP_DEFAULT_PASSWORD` |
 
-        **설치 후**
-        1. 앱을 열고(설정 페이지로 이동됩니다) 로그인합니다.
-        2. Addons에서 이미 사용 중인 각 Stremio 애드온의 manifest URL을 붙여넣습니다.
-        3. 필터: `HEVC` / `x265` 인코드 제외, `Dolby Vision` 제외, `2160p` 해상도 제외. 정렬: 해상도 내림차순.
-        4. Install을 클릭하고 생성된 URL을 Stremio에 추가한 뒤, 원본 애드온을 Stremio에서 제거하여 이 필터링된 목록만 보이도록 합니다.
+        **1. 소스 추가**
+        앱을 열고 로그인하세요. About 탭에서 모드를 **Advanced**로 전환합니다. 그런 다음 **Addons**에서 이미 사용 중인 각 Stremio 애드온의 manifest URL을 붙여넣습니다.
 
-        소스가 HEVC뿐인 콘텐츠는 브라우저에서 스트림이 표시되지 않습니다. 정상입니다: 그런 콘텐츠는 HEVC를 네이티브로 디코딩하는 Stremio 데스크톱 앱에서 여세요.
+        **2. 필터**
+        - **Encode** > Excluded: `HEVC`, `AV1`
+        - **Visual Tag** > Excluded: `10bit`, `DV`, `HDR10+`, `HDR10`, `HDR`
+        - **Resolution** > Excluded: `2160p`, `1440p`
+        - **Keyword** > Excluded: `x265`, `HEVC`, `10bit`
+        - **Size** > 영화 최소 `2 GB`
+        - **Bitrate** > "Use Runtime from Metadata Providers" 끄기
+
+        **3. 정렬**
+        **Resolution** 기준을 내림차순으로 추가합니다.
+
+        **4. Stremio에 설치**
+        **Save & Install**로 이동해 비밀번호를 설정하고 **Create**를 클릭한 뒤, **Export**로 설정을 백업하세요. 생성된 manifest URL을 복사해 Stremio의 Add addon에 추가하고, 기존 애드온은 Stremio에서 제거하여 필터링된 목록만 남깁니다.
+
+        참고: 브라우저 재생은 H.264만 지원합니다. 코덱을 표시하지 않거나 잘못 표시한 스트림은 여전히 실패할 수 있습니다. 다음 스트림을 선택하세요.
 
 x-compose-app:
   webui-host: aiostreams-${domain}
