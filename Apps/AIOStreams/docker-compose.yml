@@ -34,6 +34,11 @@ services:
       # Dashboard / configure login. Gates the human UI only; the add-on URL that
       # Stremio fetches stays reachable (its encrypted config is the credential).
       AIOSTREAMS_AUTH: "admin:$APP_DEFAULT_PASSWORD"
+      # Enforcement is separate from credentials. Without this, authRequired
+      # defaults to false and /stremio/configure is public. Setting it true also
+      # enables the CONFIG_ACCESS_KEY gate, which is generated and persisted
+      # automatically on first run.
+      AIOSTREAMS_AUTH_REQUIRED: "true"
     volumes:
       - /DATA/AppData/aiostreams/data/:/app/data
     # The image's built-in healthcheck uses a 5s start_period, too short for the
@@ -69,8 +74,8 @@ x-casaos:
   developer: Viren070
   category: Media
   tags: ["media", "stremio", "personal"]
-  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStoreLab@main/Apps/AIOStreams/icon.png
-  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStoreLab@main/Apps/AIOStreams/icon.png
+  icon: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
+  thumbnail: https://cdn.jsdelivr.net/gh/Yundera/AppStore@main/Apps/AIOStreams/icon.png
   pre-install-cmd: |
     APP_DATA="/DATA/AppData/aiostreams" &&
     ENV_FILE="/DATA/AppData/casaos/apps/aiostreams/.env" &&
@@ -140,7 +145,7 @@ x-casaos:
         | `admin`  | `$APP_DEFAULT_PASSWORD` |
 
         **1. Add your sources**
-        Open the app and sign in. In the About tab, switch the mode to **Advanced**. Then go to **Addons** and paste the manifest URL of each Stremio addon you already use.
+        Open the app and sign in. In the About tab, switch the mode to **Advanced**. Then go to **Addons** and select these five presets: Torrentio, MediaFusion, Comet, Peerflix, TorrentsDB.
 
         **2. Filters**
         - **Encode** > Excluded: `HEVC`, `AV1`
@@ -164,7 +169,7 @@ x-casaos:
         | `admin`     | `$APP_DEFAULT_PASSWORD` |
 
         **1. Ajoutez vos sources**
-        Ouvrez l'app et connectez-vous. Dans l'onglet About, passez le mode sur **Advanced**. Allez ensuite dans **Addons** et collez l'URL du manifest de chaque addon Stremio que vous utilisez deja.
+        Ouvrez l'app et connectez-vous. Dans l'onglet About, passez le mode sur **Advanced**. Allez ensuite dans **Addons** et selectionnez ces cinq presets : Torrentio, MediaFusion, Comet, Peerflix, TorrentsDB.
 
         **2. Filtres**
         - **Encode** > Excluded : `HEVC`, `AV1`
@@ -188,7 +193,7 @@ x-casaos:
         | `admin`  | `$APP_DEFAULT_PASSWORD` |
 
         **1. 소스 추가**
-        앱을 열고 로그인하세요. About 탭에서 모드를 **Advanced**로 전환합니다. 그런 다음 **Addons**에서 이미 사용 중인 각 Stremio 애드온의 manifest URL을 붙여넣습니다.
+        앱을 열고 로그인하세요. About 탭에서 모드를 **Advanced**로 전환합니다. 그런 다음 **Addons**에서 다음 다섯 개의 프리셋을 선택하세요: Torrentio, MediaFusion, Comet, Peerflix, TorrentsDB.
 
         **2. 필터**
         - **Encode** > Excluded: `HEVC`, `AV1`
